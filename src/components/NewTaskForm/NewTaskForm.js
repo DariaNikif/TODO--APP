@@ -6,6 +6,8 @@ import './NewTaskForm.css'
 export default class NewTaskForm extends Component {
   static defaultProps = {
     onAddTask: () => {},
+    minutes: '',
+    seconds: '',
   }
 
   static propTypes = {
@@ -38,8 +40,6 @@ export default class NewTaskForm extends Component {
   handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      console.log('Minutes:', this.state.minutes)
-      console.log('Seconds:', this.state.seconds)
       const newTask = {
         id: Math.random().toString(36).substr(2, 9),
         text: this.state.text,
