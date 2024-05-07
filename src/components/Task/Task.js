@@ -54,6 +54,13 @@ export default class Task extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (prevProps.task.completed !== this.props.task.completed) {
+      if (this.props.task.completed) {
+        clearInterval(this.timerId)
+        this.setState({ currentTime: 0 })
+      }
+    }
+
     if (prevProps.task.currentTime !== this.props.task.currentTime) {
       this.setState({ currentTime: this.props.task.currentTime })
     }

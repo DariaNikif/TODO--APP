@@ -40,13 +40,21 @@ export default class NewTaskForm extends Component {
   handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
+
+      const { text, minutes, seconds } = this.state
+
+      if (isNaN(minutes) || isNaN(seconds) || parseInt(minutes) < 0 || parseInt(seconds) < 0) {
+        alert('Please enter valid numbers for minutes and seconds.')
+        return
+      }
+
       const newTask = {
         id: Math.random().toString(36).substr(2, 9),
-        text: this.state.text,
-        minutes: this.state.minutes,
-        seconds: this.state.seconds,
+        text: text,
+        minutes: minutes,
+        seconds: seconds,
       }
-      this.props.onAddTask(newTask, this.state.minutes, this.state.seconds)
+      this.props.onAddTask(newTask, minutes, seconds)
       this.setState({ text: '', minutes: '', seconds: '' })
     }
   }
