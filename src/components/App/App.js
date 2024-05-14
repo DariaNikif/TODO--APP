@@ -19,6 +19,7 @@ export default class App extends Component {
       minutes: '',
       seconds: '',
       currentTime: 0,
+      timerIds: {},
     }
   }
 
@@ -31,11 +32,22 @@ export default class App extends Component {
 
   // Добавление задач
   handleAddTask = (newTask, minutes, seconds) => {
+    let currentTime = 0
+
+    if (minutes !== '') {
+      currentTime += parseInt(minutes) * 60
+    }
+
+    if (seconds !== '') {
+      currentTime += parseInt(seconds)
+    }
+
     const createdTask = {
       ...newTask,
       createdAt: new Date(),
-      currentTime: parseInt(minutes) * 60 + parseInt(seconds),
+      currentTime: currentTime,
     }
+
     this.setState((prevState) => ({
       tasks: [...prevState.tasks, createdTask],
     }))
@@ -43,31 +55,38 @@ export default class App extends Component {
 
   //Таймер
   startTimer = (taskId) => {
-    const updatedTasks = this.state.tasks.map((task) => {
-      if (task.id === taskId) {
-        return { ...task, isRunning: true }
-      }
-      return task
-    })
+    clearInterval(this.state.timerIds[taskId])
 
-    this.updateTaskState(updatedTasks, taskId)
-
-    this.timerId = setInterval(() => {
+    const timerId = setInterval(() => {
       const updatedTasks = this.state.tasks.map((task) => {
         if (task.id === taskId && task.currentTime > 0) {
           return { ...task, currentTime: task.currentTime - 1 }
         } else if (task.id === taskId && task.currentTime === 0) {
-          clearInterval(this.timerId)
+          clearInterval(this.state.timerIds[taskId])
           return { ...task, isRunning: false }
         }
         return task
       })
       this.updateTaskState(updatedTasks, taskId)
     }, 1000)
+
+    this.setState((prevState) => ({
+      timerIds: {
+        ...prevState.timerIds,
+        [taskId]: timerId,
+      },
+    }))
   }
 
-  pauseTimer = () => {
-    clearInterval(this.timerId)
+  pauseTimer = (taskId) => {
+    clearInterval(this.state.timerIds[taskId])
+    const updatedTasks = this.state.tasks.map((task) => {
+      if (task.id === taskId) {
+        return { ...task, isRunning: false }
+      }
+      return task
+    })
+    this.setState({ tasks: updatedTasks })
   }
 
   updateTaskState = (updatedTasks, taskId) => {

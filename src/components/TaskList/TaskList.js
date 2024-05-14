@@ -50,7 +50,7 @@ export default class TaskList extends Component {
         minutes={task.minutes}
         seconds={task.seconds}
         startTimer={this.props.startTimer}
-        pauseTimer={this.props.pauseTimer}
+        pauseTimer={() => this.props.pauseTimer(task.id)}
       />
     ))
 
